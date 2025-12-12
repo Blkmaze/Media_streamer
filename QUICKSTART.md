@@ -31,7 +31,9 @@ Choose one of these options:
    ```
 
 3. **Access the app**
-   Open http://localhost:3000 in your browser
+   Open http://localhost:3001 in your browser
+
+   > **Note:** Using port 3001 to avoid conflicts with Jellystat (port 3000)
 
 That's it! 🎉
 
