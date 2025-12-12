@@ -14,3 +14,6 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Agent configuration (contains API keys)
+agents/config.json
