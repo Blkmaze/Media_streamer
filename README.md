@@ -15,6 +15,19 @@ A simple, lightweight media streaming server with a clean web interface for stre
 
 ## Installation
 
+### Option 1: Docker (Recommended)
+
+```bash
+# Using docker-compose
+docker-compose up -d
+
+# Or using docker directly
+docker build -t media-streamer .
+docker run -d -p 3000:3000 -v $(pwd)/media:/app/media --name media-streamer media-streamer
+```
+
+### Option 2: Node.js
+
 1. Clone this repository
 2. Install dependencies:
 
@@ -24,7 +37,25 @@ npm install
 
 ## Usage
 
-### Start the server
+### Docker
+
+```bash
+# Start the container
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the container
+docker-compose down
+
+# Rebuild after changes
+docker-compose up -d --build
+```
+
+### Node.js
+
+Start the server:
 
 ```bash
 npm start

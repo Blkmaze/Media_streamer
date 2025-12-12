@@ -1,0 +1,108 @@
+<!-- Media Streamer Dashboard Card -->
+<!-- Add this to your NAS-Apps-Dashboard.html file -->
+
+<div class="app-card">
+  <div class="app-icon">🎬</div>
+  <h3>Media Streamer</h3>
+  <p>Stream video and audio files</p>
+  <div class="app-links">
+    <a href="http://localhost:3000" target="_blank" class="btn-primary">Open App</a>
+    <a href="http://localhost:3000/api/media" target="_blank" class="btn-secondary">API</a>
+  </div>
+  <div class="app-info">
+    <span class="badge">Port 3000</span>
+    <span class="badge">Docker</span>
+  </div>
+</div>
+
+<style>
+/* Optional: Add these styles if your dashboard doesn't have them */
+.app-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.app-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.app-card h3 {
+  color: #667eea;
+  margin-bottom: 8px;
+  font-size: 1.5em;
+}
+
+.app-card p {
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.app-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.3s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.app-info {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: #e7e9ff;
+  color: #667eea;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+</style>
+
+<!-- Alternative: Simpler version for minimal dashboards -->
+<!--
+<div style="padding: 20px; background: white; border-radius: 10px; text-align: center;">
+  <h3>🎬 Media Streamer</h3>
+  <p>Stream video and audio files</p>
+  <a href="http://localhost:3000" target="_blank" style="display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 5px;">Open App</a>
+</div>
+-->
