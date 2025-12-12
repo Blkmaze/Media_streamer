@@ -205,6 +205,74 @@ function getContentType(filePath) {
   return types[ext] || 'application/octet-stream';
 }
 
+// Integration Agents (optional - requires API keys)
+let IntegrationAgent;
+try {
+  IntegrationAgent = require('./agents/integration-agent');
+} catch (e) {
+  console.log('Integration agents not available (missing dependencies or config)');
+}
+
+// Agent API endpoints
+if (IntegrationAgent) {
+  const agent = new IntegrationAgent();
+
+  // Dashboard stats
+  app.get('/api/agents/stats', async (req, res) => {
+    try {
+      const stats = await agent.getDashboardStats();
+      res.json({ success: true, data: stats });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Active downloads
+  app.get('/api/agents/downloads', async (req, res) => {
+    try {
+      const downloads = await agent.getDownloadStatus();
+      res.json({ success: true, data: downloads });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Upcoming content
+  app.get('/api/agents/upcoming', async (req, res) => {
+    try {
+      const days = parseInt(req.query.days) || 7;
+      const upcoming = await agent.getUpcoming(days);
+      res.json({ success: true, data: upcoming });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Search all services
+  app.get('/api/agents/search', async (req, res) => {
+    try {
+      const query = req.query.q;
+      if (!query) {
+        return res.status(400).json({ success: false, error: 'Query parameter required' });
+      }
+      const results = await agent.searchAll(query);
+      res.json({ success: true, data: results });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Service health
+  app.get('/api/agents/health', async (req, res) => {
+    try {
+      const health = await agent.getHealthStatus();
+      res.json({ success: true, data: health });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+}
+
 // Serve index.html for root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

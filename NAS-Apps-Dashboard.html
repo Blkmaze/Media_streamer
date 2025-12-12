@@ -303,6 +303,22 @@
             </div>
         </div>
 
+        <!-- Live Stats -->
+        <div class="server-info" id="live-stats" style="margin-top: 20px;">
+            <div class="info-item">
+                <strong>🎬 Movies:</strong> <span id="movie-count">--</span>
+            </div>
+            <div class="info-item">
+                <strong>📺 TV Shows:</strong> <span id="show-count">--</span>
+            </div>
+            <div class="info-item">
+                <strong>📥 Downloading:</strong> <span id="download-count">--</span>
+            </div>
+            <div class="info-item">
+                <strong>🚫 Missing:</strong> <span id="missing-count">--</span>
+            </div>
+        </div>
+
         <!-- Docker Management -->
         <h2 class="category-header">🐳 Docker Management</h2>
         <div class="apps-grid">
@@ -450,23 +466,92 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        // Check service availability (optional)
-        async function checkServices() {
-            const services = [
-                { name: 'Jellyfin', url: 'http://192.168.1.182:8096' },
-                { name: 'Radarr', url: 'http://192.168.1.182:7878' },
-                { name: 'Sonarr', url: 'http://192.168.1.182:8989' },
-                { name: 'Portainer', url: 'http://192.168.1.182:9000' },
-                { name: 'Jellystat', url: 'http://192.168.1.182:3000' },
-                { name: 'Media Streamer', url: 'http://192.168.1.182:3001' }
-            ];
+        // Update live stats from agents
+        async function updateLiveStats() {
+            try {
+                const response = await fetch('http://192.168.1.182:3001/api/agents/stats');
+                const result = await response.json();
 
-            // Note: CORS may prevent this from working
-            // This is just a template - remove if not needed
-            console.log('Services configured:', services.length);
+                if (result.success && result.data) {
+                    const stats = result.data;
+
+                    // Update movie count
+                    document.getElementById('movie-count').textContent =
+                        stats.radarr?.totalMovies || '--';
+
+                    // Update show count
+                    document.getElementById('show-count').textContent =
+                        stats.sonarr?.totalSeries || '--';
+
+                    // Update download count
+                    const downloading = (stats.radarr?.downloading || 0) + (stats.sonarr?.downloading || 0);
+                    document.getElementById('download-count').textContent = downloading;
+                    document.getElementById('download-count').style.color = downloading > 0 ? '#28a745' : '#666';
+
+                    // Update missing count
+                    const missing = stats.radarr?.missing || 0;
+                    document.getElementById('missing-count').textContent = missing;
+                    document.getElementById('missing-count').style.color = missing > 0 ? '#dc3545' : '#666';
+                }
+            } catch (error) {
+                console.log('Stats unavailable (agents may not be configured)');
+                // Don't show error to user, just keep showing "--"
+            }
         }
 
-        checkServices();
+        // Update stats immediately and every 30 seconds
+        updateLiveStats();
+        setInterval(updateLiveStats, 30000);
+
+        // Update service health indicators
+        async function updateServiceHealth() {
+            try {
+                const response = await fetch('http://192.168.1.182:3001/api/agents/health');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const health = result.data;
+                    console.log('Service health:', health);
+
+                    // Update network status based on Jellyfin availability
+                    const statusIndicator = document.querySelector('.status-indicator');
+                    if (health.jellyfin === 'healthy') {
+                        statusIndicator.classList.add('status-online');
+                        statusIndicator.classList.remove('status-offline');
+                    } else {
+                        statusIndicator.classList.remove('status-online');
+                        statusIndicator.classList.add('status-offline');
+                    }
+                }
+            } catch (error) {
+                console.log('Health check unavailable');
+            }
+        }
+
+        // Check health every minute
+        updateServiceHealth();
+        setInterval(updateServiceHealth, 60000);
+
+        // Show active downloads in console (for debugging)
+        async function checkActiveDownloads() {
+            try {
+                const response = await fetch('http://192.168.1.182:3001/api/agents/downloads');
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.active) {
+                    console.log('Active downloads:', result.data.count);
+                    result.data.items.forEach(item => {
+                        console.log(`  ${item.type}: ${item.title} - ${item.progress}%`);
+                    });
+                }
+            } catch (error) {
+                // Silently fail
+            }
+        }
+
+        // Check downloads every 2 minutes
+        checkActiveDownloads();
+        setInterval(checkActiveDownloads, 120000);
     </script>
 </body>
 </html>

@@ -1,0 +1,22 @@
+{
+  "jellyfin": {
+    "baseUrl": "http://192.168.1.182:8096",
+    "apiKey": "YOUR_JELLYFIN_API_KEY_HERE",
+    "userId": "YOUR_JELLYFIN_USER_ID_HERE"
+  },
+  "radarr": {
+    "baseUrl": "http://192.168.1.182:7878",
+    "apiKey": "YOUR_RADARR_API_KEY_HERE"
+  },
+  "sonarr": {
+    "baseUrl": "http://192.168.1.182:8989",
+    "apiKey": "YOUR_SONARR_API_KEY_HERE"
+  },
+  "options": {
+    "autoScanInterval": 300000,
+    "downloadCheckInterval": 60000,
+    "healthCheckInterval": 120000,
+    "enableNotifications": false,
+    "enableAutoScan": false
+  }
+}
