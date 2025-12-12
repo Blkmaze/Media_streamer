@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAS Apps Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .server-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-item strong {
+            font-size: 0.9em;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .app-card h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .app-card p {
+            color: #666;
+            margin-bottom: 15px;
+            text-align: center;
+            min-height: 40px;
+        }
+
+        .app-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .app-info {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #e7e9ff;
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .badge.green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.blue {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge.orange {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .status-online {
+            background: #28a745;
+            box-shadow: 0 0 10px #28a745;
+        }
+
+        .status-offline {
+            background: #dc3545;
+        }
+
+        .category-header {
+            color: white;
+            font-size: 1.8em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .quick-actions {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .quick-actions h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .server-info {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .network-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 NAS Apps Dashboard</h1>
+            <p>Centralized access to all your media and infrastructure services</p>
+        </header>
+
+        <div class="server-info">
+            <div class="info-item">
+                <strong>🌐 Server IP:</strong> 192.168.1.182
+            </div>
+            <div class="info-item">
+                <strong>🔒 Tailscale:</strong> Connected
+            </div>
+            <div class="info-item">
+                <strong>🐳 Docker:</strong> Running
+            </div>
+            <div class="info-item">
+                <strong>⏰ Last Updated:</strong> <span id="current-time"></span>
+            </div>
+        </div>
+
+        <!-- Docker Management -->
+        <h2 class="category-header">🐳 Docker Management</h2>
+        <div class="apps-grid">
+            <div class="app-card">
+                <div class="app-icon">🐳</div>
+                <h3>Portainer</h3>
+                <p>Docker container management and monitoring</p>
+                <div class="app-links">
+                    <a href="http://192.168.1.182:9000" target="_blank" class="btn-primary">Open Portainer</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge blue">Port 9000</span>
+                    <span class="badge green">Essential</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Servers -->
+        <h2 class="category-header">🎬 Media Servers</h2>
+        <div class="apps-grid">
+            <div class="app-card">
+                <div class="app-icon">🎬</div>
+                <h3>Jellyfin</h3>
+                <p>Main media server for movies, TV shows, and music</p>
+                <div class="app-links">
+                    <a href="http://192.168.1.182:8096" target="_blank" class="btn-primary">Open Jellyfin</a>
+                    <a href="http://192.168.1.182:8096/web/index.html#!/dashboard.html" target="_blank" class="btn-secondary">Dashboard</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge blue">Port 8096</span>
+                    <span class="badge green">Core Service</span>
+                </div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-icon">📊</div>
+                <h3>Jellystat</h3>
+                <p>Jellyfin statistics and analytics dashboard</p>
+                <div class="app-links">
+                    <a href="http://192.168.1.182:3000" target="_blank" class="btn-primary">Open Jellystat</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge blue">Port 3000</span>
+                    <span class="badge">Analytics</span>
+                </div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-icon">📺</div>
+                <h3>Media Streamer</h3>
+                <p>Quick media streaming and upload service</p>
+                <div class="app-links">
+                    <a href="http://192.168.1.182:3001" target="_blank" class="btn-primary">Open Streamer</a>
+                    <a href="http://192.168.1.182:3001/api/media" target="_blank" class="btn-secondary">API</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge blue">Port 3001</span>
+                    <span class="badge orange">New</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Management -->
+        <h2 class="category-header">📥 Media Management</h2>
+        <div class="apps-grid">
+            <div class="app-card">
+                <div class="app-icon">🎥</div>
+                <h3>Radarr</h3>
+                <p>Movie collection manager and downloader</p>
+                <div class="app-links">
+                    <a href="http://192.168.1.182:7878" target="_blank" class="btn-primary">Open Radarr</a>
+                    <a href="http://192.168.1.182:7878/calendar" target="_blank" class="btn-secondary">Calendar</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge blue">Port 7878</span>
+                    <span class="badge green">Automation</span>
+                </div>
+            </div>
+
+            <div class="app-card">
+                <div class="app-icon">📺</div>
+                <h3>Sonarr</h3>
+                <p>TV show collection manager and downloader</p>
+                <div class="app-links">
+                    <a href="http://192.168.1.182:8989" target="_blank" class="btn-primary">Open Sonarr</a>
+                    <a href="http://192.168.1.182:8989/calendar" target="_blank" class="btn-secondary">Calendar</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge blue">Port 8989</span>
+                    <span class="badge green">Automation</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network & VPN -->
+        <h2 class="category-header">🔒 Network & VPN</h2>
+        <div class="apps-grid">
+            <div class="app-card">
+                <div class="app-icon">🔐</div>
+                <h3>Tailscale</h3>
+                <p>VPN for secure remote access to all services</p>
+                <div class="app-links">
+                    <a href="https://login.tailscale.com/admin/machines" target="_blank" class="btn-primary">Tailscale Admin</a>
+                    <a href="http://192.168.1.182:41641" target="_blank" class="btn-secondary">Local Status</a>
+                </div>
+                <div class="app-info">
+                    <span class="badge green">Secure Access</span>
+                    <span class="badge">VPN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>⚡ Quick Actions</h3>
+            <div class="action-buttons">
+                <a href="http://192.168.1.182:9000/#/containers" class="action-btn">📦 View All Containers</a>
+                <a href="http://192.168.1.182:8096/web/index.html#!/settings/server.html" class="action-btn">⚙️ Jellyfin Settings</a>
+                <a href="http://192.168.1.182:7878/activity/queue" class="action-btn">📥 Radarr Queue</a>
+                <a href="http://192.168.1.182:8989/activity/queue" class="action-btn">📺 Sonarr Queue</a>
+                <a href="http://192.168.1.182:3001" class="action-btn">⬆️ Upload Media</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>NAS Dashboard v2.0 | All services running on 192.168.1.182</p>
+            <p>Accessible via Tailscale for remote access</p>
+        </footer>
+    </div>
+
+    <!-- Network Status Indicator -->
+    <div class="network-status">
+        <span class="status-indicator status-online"></span>
+        <strong>Network Online</strong>
+    </div>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Check service availability (optional)
+        async function checkServices() {
+            const services = [
+                { name: 'Jellyfin', url: 'http://192.168.1.182:8096' },
+                { name: 'Radarr', url: 'http://192.168.1.182:7878' },
+                { name: 'Sonarr', url: 'http://192.168.1.182:8989' },
+                { name: 'Portainer', url: 'http://192.168.1.182:9000' },
+                { name: 'Jellystat', url: 'http://192.168.1.182:3000' },
+                { name: 'Media Streamer', url: 'http://192.168.1.182:3001' }
+            ];
+
+            // Note: CORS may prevent this from working
+            // This is just a template - remove if not needed
+            console.log('Services configured:', services.length);
+        }
+
+        checkServices();
+    </script>
+</body>
+</html>
