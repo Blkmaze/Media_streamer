@@ -8,17 +8,35 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      # Mount entire media directory
       - ./media:/app/media
+
+      # Optional: Mount external media libraries (uncomment and customize)
+      # - /path/to/your/movies:/app/media/videos/movies:ro
+      # - /path/to/your/music:/app/media/audio/music:ro
+
+      # Named volume for uploads (persists even if container is removed)
       - media-uploads:/app/media/uploads
     environment:
       - NODE_ENV=production
       - PORT=3000
+      # Optional: Uncomment to override defaults
+      # - MAX_FILE_SIZE=524288000
+      # - ALLOWED_EXTENSIONS=mp4,mp3,webm,ogg,wav,avi,mkv,mov
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/media', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 5s
+    networks:
+      - media-network
+
+networks:
+  media-network:
+    driver: bridge
 
 volumes:
   media-uploads:
